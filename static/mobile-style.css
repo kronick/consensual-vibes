@@ -184,7 +184,10 @@ a #message {
 }
 
 #login {
-    font-size: 12pt;
+    font-size: 48pt;
+}
+#login select {
+    font-size: 24pt;
 }
 #phrase_b .word {
     background-color: #008bd3;

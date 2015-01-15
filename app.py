@@ -11,7 +11,8 @@ def info():
 
 @app.route("/")
 def index():
-    return render_template("index.html", SSID="")
+    return render_template("index.html")
+    #return redirect("http://disk.cactus:2000/swipe")
 
     # if request.headers["host"] != u"disk.cactus":
     #     return render_template("redirect.html", url="http://disk.cactus/")
@@ -101,6 +102,10 @@ def get_matches(format):
     with sqlite3.connect("vibes.db") as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
+        # Get number of users
+        cursor.execute("SELECT name FROM users", (user,))
+        n_users = len(cursor.fetchall())
+
         cursor.execute("SELECT DISTINCT phrase_id FROM ratings WHERE rating > 0")
         rated = [r["phrase_id"] for r in cursor.fetchall()]
         for id in rated:
@@ -111,9 +116,10 @@ def get_matches(format):
                 cursor.execute("SELECT * FROM phrases WHERE id is ?", (id,))
                 result = cursor.fetchone()
                 phrase = {"a": result["a"], "b": result["b"], "id":result["id"]}
-                if rating > 2:
+                if rating >= n_users:               # Match is defined as everyone agrees
                     matches.append(phrase)
-                else:
+                #elif rating >= n_users / 2.0:    # Good ones is defined as more than half users agree
+                elif rating == n_users - 1:
                     good_ones.append(phrase)
 
     if format is "html":
@@ -138,8 +144,9 @@ def generate():
             if len(waiting_phrases) > 0:
                 cursor.execute("SELECT * FROM phrases WHERE id is ?", (waiting_phrases[0]["phrase_id"],))
                 phrase = cursor.fetchone()
-                print "RETURNING WAITING PHRASE {} + {}".format(phrase["a"], phrase["b"])
-                return jsonify(a=phrase["a"], b=phrase["b"], id=phrase["id"])
+                if phrase is not None:
+                    print "RETURNING WAITING PHRASE {} + {}".format(phrase["a"], phrase["b"])
+                    return jsonify(a=phrase["a"], b=phrase["b"], id=phrase["id"])
 
         # Create a new phrase, add it to the database, serve it to the user
         cursor.execute("SELECT * FROM words WHERE type is 'thing'")
@@ -229,6 +236,19 @@ def rate(phrase_id):
                 else:
                     who = session['user'].upper()
                 create_notification(u, render_template("match_notification.html", a=result["a"], b=result["b"], message=u"😰 {} KILLED THE VIBE".format(who)))
+        #elif rating > 0 and positive >= (len(other_users) / 2.0):
+        elif rating > 0 and positive == (len(other_users) - 1):
+            # GENERATING ENERGY
+            cursor.execute("SELECT * FROM phrases WHERE id is ?", (phrase_id,))
+            result = cursor.fetchone()
+            other_users.append(session['user']) # Make sure to notify this user, too
+            for u in other_users:
+                #create_notification(u, "It's a match: {} + {}".format(result["a"], result["b"]))
+                if u is session['user']:
+                    who = "YOU"
+                else:
+                    who = session['user'].upper()
+                create_notification(u, render_template("match_notification.html", a=result["a"], b=result["b"], message=u"🌵 We're feeling this vibe:".format(who)))
 
     return get_rating(phrase_id) 
 
@@ -343,6 +363,6 @@ def notfound(error):
 app.secret_key = "the ambulance chasers of venture capital"
 app.debug = True
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', threaded=True, port=80)
+    app.run(host='0.0.0.0', threaded=True, port=2000)
 
 

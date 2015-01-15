@@ -10,6 +10,7 @@
 loggedin = ""
 notification_timer = null
 notifications_lock = false
+n_users = 0
 
 $(document).ready(function() {
     // POPULATE USER LIST
@@ -22,6 +23,7 @@ $(document).ready(function() {
                 loggedin = data["loggedin"]
 
             $("#user_select").append("<option value='" + user + "'" + selected + ">" + user + "</option>")
+            n_users++
         })
     })
 
@@ -112,7 +114,7 @@ $(document).ready(function() {
     // LOAD FIRST IDEA
     nextPhrase()
     // START NOTIFICATION TIMER
-    notification_timer = window.setInterval(function() { check_notifications(); }, 1000)
+    notification_timer = window.setInterval(function() { check_notifications(); }, 5000)
     toggle_notifications()
 
     $("#notification_count").click(function() { toggle_notifications() })
@@ -147,13 +149,18 @@ function tallyRatings(ratings) {
         sum += rating
     })
 
-    if(sum == 3) {
+    if(sum == n_users) {
         show_message("IT'S A MATCH")
     }
-    else if(sum == 2) {
+    else if(sum >= n_users/2.0 && myRating > 0) {
+    // else if(sum == n_users-1 && myRating > 0) {
+        show_message("WE'RE FEELING THAT VIBE")
+    }
+    else if(sum == 2 && myRating > 0) {
+    // else if(sum == n_users-1 && myRating > 0) {
         show_message("THAT'S A GOOD ONE")
     }
-    else if(sum == 1 && myRating < 0) {
+    else if(sum == n_users-2 && myRating < 0) {
         show_message("YOU KILLED THE VIBE")
     }
 }
@@ -242,11 +249,11 @@ function toggle_notifications() {
 </script>
 </head>
 <body>
-<div id="login">
+<!-- <div id="login">
 YOU: <select name="user" id="user_select">
     <option value="">--</option>
 </select>
-</div>
+</div> -->
 
 <div id="phrase_container">
     <div id="phrase">

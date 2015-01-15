@@ -1,42 +1,63 @@
-<html>
-<meta charset="utf-8">
+<!doctype html>
 <head>
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.gif') }}">
-<meta name="viewport" content="width=device-width, user-scalable=1">
-<link rel="stylesheet" href="{{ url_for("static", filename="style.css") }}" type="text/css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=0, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<title>💾🌵 consenual vibes</title>
+<link rel="stylesheet" href="{{ url_for("static", filename="mobile-style.css") }}" type="text/css">
+<script src="{{ url_for("static", filename="jquery-2.1.1.min.js") }}"></script>
+<script src="{{ url_for("static", filename="jquery.transit.min.js") }}"></script>
+<script type="text/javascript">
+loggedin = ""
+notification_timer = null
+notifications_lock = false
+n_users = 0
 
+$(document).ready(function() {
+    // POPULATE USER LIST
+    $.getJSON("{{ url_for('userlist') }}", function(data) {
+        $.each(data["users"], function(key, user) {
+            console.log(user)
+            selected = ""
+            if(data["loggedin"] == user)
+                //selected = " SELECTED"
+                loggedin = data["loggedin"]
+
+            $("#user_select").append("<option value='" + user + "'" + selected + ">" + user + "</option>")
+            n_users++
+        })
+    })
+
+    // BIND SIMPLE LOGIN HANDLER
+    $("#user_select").change(function() {
+        $.post("{{ url_for('login') }}", data={"user": $("#user_select").find(":selected").text()}, function(data) {
+            console.log(data)
+            location.href="/swipe"
+        })
+    })
+
+})
+
+function show_message(text) {
+    $("#message").text(text)
+    $("#message").fadeIn(200).delay(5000).fadeOut(500)
+}
+
+</script>
 </head>
 <body>
+<div id="login">
+IDENTIFY YOURSELF:
+<br>
+<select name="user" id="user_select">
+    <option value="">--</option>
+</select>
+</div>
 
-    <img src="{{ url_for('static', filename='img/diskcactus.png') }}" id="logotype" />
-    <div id="tagline">
-    <!-- <div class="l"><a href="#">environments</a></div> <div class="m">&</div> <div class="r"><a href="#">devices</a></div> -->
-    <span class="bg">environments</span> & <span class="bg">devices</span>
 
-    </div>
-    <img src="{{ url_for('static', filename='img/rainbow-hr.gif') }}" class="hr">
+<a href="/matches">
+<marquee scrollamount="30" id="message">
+test
+</marquee>
+</a>
 
-    <div id="about">
-    <p>💾🌵 (pronounced <span class="bg">disk cactus</span>) is a new art and technology studio in Oakland, CA that makes rad environments and devices for people like you.</p>
-    <p>Let's design an interaction together:
-    <br>
-    ~&gt;<a href="mailto:connect@diskcact.us">connect@diskcact.us</a>&lt;~
-    </p>
-    <br><br>
-    <!-- <a href="/ideate" class="bg">IDEATE</a>
-    <br><br> -->
-    <a href="/tinderate" class="bg">TINDERATE</a>
-    <br><br><br>
-    </div>
-    <!-- <form action='change' method='POST'>
-    DIY EMOJI WIFI<br/><br/>
-    <b>&mdash;</b><input type='text' class='ssid' name='ssid' value="{{ SSID }}" /><b>&mdash;</b>
-    <br />
-    <input type='submit' value='>>>>>>'>
-    </form> -->
-
-<div id="ticker">
-<marquee>&middot; &middot; &middot; Themes for 2015: dirt, felt, cork, (water?) &middot; PUT AN ARDUINO ON IT &middot; information sonification &middot; slow internet &middot; interspecies communication &middot; hammocks &middot; feminist WIFI &middot; full unicode support &middot; heirloom jpegs &middot; white light &middot; concrete electronics &middot; &middot; &middot;</marquee>
-</div>    
 </body>
-</html>
