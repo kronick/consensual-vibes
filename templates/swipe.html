@@ -14,7 +14,7 @@ n_users = 0
 
 $(document).ready(function() {
     // POPULATE USER LIST
-    $.getJSON("{{ url_for('userlist') }}", function(data) {
+    $.getJSON("{{ url_for('userlist', game=game) }}", function(data) {
         $.each(data["users"], function(key, user) {
             console.log(user)
             selected = ""
@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     // BIND SIMPLE LOGIN HANDLER
     $("#user_select").change(function() {
-        $.post("{{ url_for('login') }}", data={"user": $("#user_select").find(":selected").text()}, function(data) {
+        $.post("{{ url_for('login', game=game) }}", data={"user": $("#user_select").find(":selected").text()}, function(data) {
             console.log(data)
             location.reload()
         })
@@ -136,7 +136,7 @@ function submitVote(rating) {
     $("#spinner").stop().fadeIn(2000);
     //spinner();
     id = $("#phrase").prop("data-id")
-    $.post("/phrase/" + id + "/rating", data={"rating": rating}, function(response) {
+    $.post("/{{game}}/phrase/" + id + "/rating", data={"rating": rating}, function(response) {
         tallyRatings(response["ratings"]);
         nextPhrase();
     })
@@ -151,6 +151,7 @@ function tallyRatings(ratings) {
 
     if(sum == n_users) {
         show_message("IT'S A MATCH")
+        $("#match_sound")[0].play()
     }
     else if(sum >= n_users/2.0 && myRating > 0) {
     // else if(sum == n_users-1 && myRating > 0) {
@@ -167,7 +168,7 @@ function tallyRatings(ratings) {
 
 function nextPhrase() {
     $("#phrase_container").animate({x: 0, y: 0}, 0)
-    $.getJSON("/phrase", function(data) {
+    $.getJSON("/{{game}}/phrase", function(data) {
         $("#phrase_a .word").text(data["a"])
         $("#phrase_b .word").text(data["b"])
         $("#phrase").prop("data-id", data["id"])
@@ -189,7 +190,7 @@ function show_message(text) {
 function check_notifications(all) {
     if(notifications_lock) return;
     notifications_lock = true;
-    $.getJSON(all ? "/notifications" : "/notifications/unread", function(response) {
+    $.getJSON(all ? "/{{game}}/notifications" : "/{{game}}/notifications/unread", function(response) {
         
         unread = 0
         $.each(response["notifications"], function(idx, n) {
@@ -234,7 +235,7 @@ function toggle_notifications() {
         $("#notifications").scrollTop(0)
         $("#notifications_container").animate({"left": "0"}, 500)
         // Tell the server all notifications are read
-        $.post("{{ url_for("read_all_notifications") }}")
+        $.post("{{ url_for("read_all_notifications", game=game) }}")
         $("#notification_count").addClass("hidden")   
     }
     else {
@@ -254,11 +255,10 @@ YOU: <select name="user" id="user_select">
     <option value="">--</option>
 </select>
 </div> -->
-
 <div id="phrase_container">
     <div id="phrase">
     <div id="phrase_a">
-    <span id="phrase_a" class="word">
+    <span id="phrase_a" class="word" >
     </span>
     </div>
     <div id="phrase_plus">
@@ -294,4 +294,6 @@ test
 </div>
 <div id="debug">
 </div>
+
+<audio src="{{ url_for('static', filename='match.wav') }}" type="audio/wav" hidden=1 id="match_sound">
 </body>

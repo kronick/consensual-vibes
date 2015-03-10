@@ -11,50 +11,57 @@ def info():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    games = [game[:-3] for game in os.listdir("games") if game.endswith(".db")]
+
+    return render_template("choose_game.html", games=games)
+
+@app.route("/<game>")
+def load_game(game):
+    return render_template("login.html", game=game)
+
     #return redirect("http://disk.cactus:2000/swipe")
 
     # if request.headers["host"] != u"disk.cactus":
     #     return render_template("redirect.html", url="http://disk.cactus/")
 
-@app.route("/swipe")
-def swipe():
-    return render_template("swipe.html")
+@app.route("/<game>/swipe")
+def swipe(game):
+    return render_template("swipe.html", game=game)
 
 
-@app.route("/words/things", methods=["POST"])
-def addthing():
-    with sqlite3.connect("vibes.db") as db:
+@app.route("/<game>/words/things", methods=["POST"])
+def addthing(game):
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         cursor.execute("INSERT INTO words(word, type) VALUES(?, ?)", (request.form["word"], "thing"))
         db.commit()
     return "OK"    
 
-@app.route("/words/modifiers", methods=["POST"])
-def addmodifier():
-    with sqlite3.connect("vibes.db") as db:
+@app.route("/<game>/words/modifiers", methods=["POST"])
+def addmodifier(game):
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         cursor.execute("INSERT INTO words(word, type) VALUES(?, ?)", (request.form["word"], "modifier"))
         db.commit()
     return "OK"    
 
-@app.route("/words/rebuild", defaults={"rebuild_all": False})
-@app.route("/rebuild", defaults={"rebuild_all": True})
-def rebuild(rebuild_all):
+@app.route("/<game>/words/rebuild", defaults={"rebuild_all": False})
+@app.route("/<game>/rebuild", defaults={"rebuild_all": True})
+def rebuild(game, rebuild_all):
     # Load words from JSON config files
-    with open("config/words.json") as words_file:
+    with open("games/{}_words.json".format(game)) as words_file:
         words_json = json.load(words_file)
         things     = words_json["things"]
         modifiers  = words_json["modifiers"]
 
-    with open("config/users.json") as users_file:
+    with open("games/{}_users.json".format(game)) as users_file:
         users_json = json.load(users_file)
         users = users_json["users"]
 
 
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         cursor = db.cursor()
 
         cursor.execute("DROP TABLE IF EXISTS words")
@@ -94,16 +101,16 @@ def rebuild(rebuild_all):
         db.commit()
     return "Database rebuilt!"
 
-@app.route("/matches.json", methods=["GET"], defaults={"format": "json"})
-@app.route("/matches", methods=["GET"], defaults={"format": "html"})
-def get_matches(format):
+@app.route("/<game>/matches.json", methods=["GET"], defaults={"format": "json"})
+@app.route("/<game>/matches", methods=["GET"], defaults={"format": "html"})
+def get_matches(game, format):
     matches = []
     good_ones = []
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         # Get number of users
-        cursor.execute("SELECT name FROM users", (user,))
+        cursor.execute("SELECT name FROM users")
         n_users = len(cursor.fetchall())
 
         cursor.execute("SELECT DISTINCT phrase_id FROM ratings WHERE rating > 0")
@@ -123,18 +130,18 @@ def get_matches(format):
                     good_ones.append(phrase)
 
     if format is "html":
-        return render_template("matches.html", matches=matches, good_ones=good_ones)
+        return render_template("matches.html", game=game, matches=matches, good_ones=good_ones)
     elif format is "json":
-        return jsonify(matches=matches, good_ones=good_ones)
+        return jsonify(game=game, matches=matches, good_ones=good_ones)
 
 
 
-@app.route("/phrase", methods=["GET"])
-def generate():
+@app.route("/<game>/phrase", methods=["GET"])
+def generate(game):
     if not session.has_key("user"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login", game=game))
 
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         # Check if there are any ratings waiting with this user
@@ -170,10 +177,10 @@ def generate():
         db.commit()
     return jsonify(a=a, b=b, id=cursor.lastrowid)
 
-@app.route("/phrase/<int:phrase_id>/rating", methods=["POST"])
-def rate(phrase_id):
+@app.route("/<game>/phrase/<int:phrase_id>/rating", methods=["POST"])
+def rate(game, phrase_id):
     if not session.has_key("user"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login", game=game))
 
     user = session['user']
     rating = int(request.form["rating"])
@@ -181,7 +188,7 @@ def rate(phrase_id):
     positive = 0
     negative = 0
 
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()    
 
@@ -222,7 +229,7 @@ def rate(phrase_id):
             other_users.append(session['user']) # Make sure to notify this user, too
             for u in other_users:
                 #create_notification(u, "It's a match: {} + {}".format(result["a"], result["b"]))
-                create_notification(u, render_template("match_notification.html", a=result["a"], b=result["b"], message=u"👍 It's a match!"))
+                create_notification(game, u, render_template("match_notification.html", game=game, a=result["a"], b=result["b"], message=u"👍 It's a match!"))
 
         elif rating < 0 and positive >= (len(other_users)):
             # YOU KILLED THE VIBE
@@ -235,9 +242,9 @@ def rate(phrase_id):
                     who = "YOU"
                 else:
                     who = session['user'].upper()
-                create_notification(u, render_template("match_notification.html", a=result["a"], b=result["b"], message=u"😰 {} KILLED THE VIBE".format(who)))
+                create_notification(game, u, render_template("match_notification.html", game=game, a=result["a"], b=result["b"], message=u"😰 {} KILLED THE VIBE".format(who)))
         #elif rating > 0 and positive >= (len(other_users) / 2.0):
-        elif rating > 0 and positive == (len(other_users) - 1):
+        elif rating > 0 and positive == (len(other_users)):
             # GENERATING ENERGY
             cursor.execute("SELECT * FROM phrases WHERE id is ?", (phrase_id,))
             result = cursor.fetchone()
@@ -248,16 +255,16 @@ def rate(phrase_id):
                     who = "YOU"
                 else:
                     who = session['user'].upper()
-                create_notification(u, render_template("match_notification.html", a=result["a"], b=result["b"], message=u"🌵 We're feeling this vibe:".format(who)))
+                create_notification(game, u, render_template("match_notification.html", game=game,  a=result["a"], b=result["b"], message=u"🌵 We're feeling this vibe:".format(who)))
 
-    return get_rating(phrase_id) 
+    return get_rating(game, phrase_id) 
 
-@app.route("/phrase/<int:phrase_id>/rating", methods=["GET"])
-def get_rating (phrase_id):
+@app.route("/<game>/phrase/<int:phrase_id>/rating", methods=["GET"])
+def get_rating (game, phrase_id):
     if not session.has_key("user"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login", game=game))
 
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()    
         cursor.execute("SELECT * FROM ratings WHERE phrase_id is ?", (phrase_id,))    
@@ -267,12 +274,12 @@ def get_rating (phrase_id):
 
         return jsonify(ratings=ratings)
 
-@app.route("/notifications/test")
-def create_bogus_notification():
-    return create_notification(user="Sam", text="This is an alert")
+@app.route("/<game>/notifications/test")
+def create_bogus_notification(game):
+    return create_notification(game=game, user="Sam", text="This is an alert")
 
-def create_notification(user, text):
-    with sqlite3.connect("vibes.db") as db:
+def create_notification(game, user, text):
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         cursor = db.cursor()
         cursor.execute("INSERT INTO notifications(user_name, text) VALUES(?,?)", (user, text))
         db.commit()
@@ -280,14 +287,14 @@ def create_notification(user, text):
 
     return "ERROR"
 
-@app.route("/notifications/unread", methods=["GET"], defaults={"all": False})
-@app.route("/notifications", methods=["GET"], defaults={"all": True})
-def get_notifications(all):
+@app.route("/<game>/notifications/unread", methods=["GET"], defaults={"all": False})
+@app.route("/<game>/notifications", methods=["GET"], defaults={"all": True})
+def get_notifications(game, all):
     if not session.has_key("user"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login", game=game))
 
     # Look in the database and return new notifications for the user
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         if all:
@@ -299,33 +306,33 @@ def get_notifications(all):
 
         return jsonify(notifications=notifications)
 
-@app.route("/notifications/read", methods=["POST", "GET"])
-def read_all_notifications():
+@app.route("/<game>/notifications/read", methods=["POST", "GET"])
+def read_all_notifications(game):
     if not session.has_key("user"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login", game=game))
 
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         cursor = db.cursor()
         cursor.execute("UPDATE notifications SET read=1 WHERE user_name is ?", (session["user"],))
         db.commit()
     
         return str(cursor.rowcount) # 1 if successful, 0 if not
 
-@app.route("/notifications/<int:id>/read", methods=["POST", "GET"])
-def read_notification(id):
+@app.route("/<game>/notifications/<int:id>/read", methods=["POST", "GET"])
+def read_notification(game, id):
     if not session.has_key("user"):
-        return redirect(url_for("login"))
+        return redirect(url_for("login", game=game))
 
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         cursor = db.cursor()
         cursor.execute("UPDATE notifications SET read=1 WHERE id=? AND user_name is ? AND read=0", (id,session["user"]))
         db.commit()
     
         return str(cursor.rowcount) # 1 if successful, 0 if not
 
-@app.route("/users", methods=["GET"])
-def userlist():
-    with sqlite3.connect("vibes.db") as db:
+@app.route("/<game>/users", methods=["GET"])
+def userlist(game):
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()    
         cursor.execute("SELECT * FROM users")
@@ -341,10 +348,10 @@ def userlist():
 def render_login():
     return "Please login."
 
-@app.route("/login", methods=["POST"])
-def login():
+@app.route("/<game>/login", methods=["POST"])
+def login(game):
     user = request.form['user']
-    with sqlite3.connect("vibes.db") as db:
+    with sqlite3.connect("games/{}.db".format(game)) as db:
         db.row_factory = sqlite3.Row
         cursor = db.cursor()
         cursor.execute("SELECT * FROM users WHERE name is ?", (user,))
