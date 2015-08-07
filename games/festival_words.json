@@ -1,0 +1,39 @@
+{
+    "things":
+        [
+            "swag", "paraphenalia", "tours", "BART", "exhibition", "website", "Tuesday", "weekend", "summit", "festival",
+            "archive", "award", "screenings", "speakers", "webcams", "events", "excursions", "discussion", "mixer", "crashers",
+            "cameras", "performance", "reachability", "ritual", "sharing economy", "shuttle", "MUNI", "van", "farm", "satellite",
+            "situation", "inflatables", "services", "kiosk", "booth", "commission", "redistribution", "wealth", "disruption",
+            "young money", "art", "technology", "questions", "challenge", "construction", "bridge", "cable", "surfing", "beach",
+            "dinner", "summit", "testimonial", "access", "-a-thon", "panel", "light", "\"there\"", "soil", "loam", "series", "area",
+            "silicon", "valley", "badge", "nametag", "partners", "dialogue", "conversation", "economics", "reading", "tech", 
+            "collaboration", "walk", "hike", "climb", "headphones", "WIFI", "personality", "people", "animals", "chickens", "goats",
+            "llamas", "kitchen", "living room", "fireplace", "buzzwords", "baklava", "hype", "book", "zine", "pamphlet", "guide",
+            "manual", "manifesto", "consumer", "product", "gadget", "sensor", "museum", "gallery", "theater", "concert", "stage",
+            "podium", "microphone", "gesture", "bodies", "movement", "dance", "costume", "music", "peninsula", "neighborhood",
+            "street", "action", "proposal", "wall", "bench", "chair", "labor", "work", "play", "time out", "format", "surface",
+            "citizen", "space", "\"here\"", "home", "property", "land", "commute", "device", "phone", "emoji", "sand", "route",
+            "journey", "session", "web", "vehicle", "transit", "site", "net", "tent", "camp", "trailer", "bike", "cart",
+            "activity", "vibes", "light", "game", "architecture", "instrument", "tool", "coins", "agency", "model",
+            "boundary", "margin"
+        ],
+
+    "modifiers":
+        [
+            "the same", "strange", "BART-based", "non-24-hour", "gold", "always-on", "party", "floating", "public", "online",
+            "offline", "webcam", "long", "mystery", "surprise", "surplus", "disposable", "narrated", "confiscated", "all-night",
+            "disappearing", "reachable", "unreachable", "ritualized", "team building", "on demand", "accessible", "satellite",
+            "underground", "inflatable", "curatorial", "distributed", "patented", "hacked", "annual", "perpetual", "destination",
+            "digital", "analog", "transoceanic", "trans-", "oceanic", "agricultural", "local", "tequila", "aerial", "paired",
+            "assigned", "recorded", "urban", "rural", "spatial", "dynamic", "synergetic", "buzzy", "chill-out", "published",
+            "privileged", "WIFI", "absurd", "disorienting", "growing", "living", "gestating", "physical", "censored", "slow",
+            "head-mounted", "hand-held", "gestural", "glass", "emobodied", "powered", "time-based", "pre-recorded", "scripted",
+            "networked", "infinite", "linked", "unlinked", "offline", "speculative", "fictional", "imaginary", "false",
+            "difficult", "manual", "deep", "tall", "wide", "sponsored", "corporate", "bootstrapped", "invite-only", "private",
+            "domestic", "curated", "accidental", "political", "ephemeral", "temporary", "festive", "magnetic", "i-", "interactive",
+            "herbal", "modular", "guided", "tyranical", "open", "closed", "fiber optic", "arhival", "material", "distant",
+            "instrumental", "familiar", "free", "activated", "unplanned"
+        ]
+
+}
