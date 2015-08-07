@@ -1,0 +1,64 @@
+<!doctype html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=0, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<title>💾🌵 consenual vibes / {{ game }}</title>
+<link rel="stylesheet" href="{{ url_for("static", filename="mobile-style.css") }}" type="text/css">
+<script src="{{ url_for("static", filename="jquery-2.1.1.min.js") }}"></script>
+<script src="{{ url_for("static", filename="jquery.transit.min.js") }}"></script>
+<script type="text/javascript">
+loggedin = ""
+notification_timer = null
+notifications_lock = false
+n_users = 0
+
+$(document).ready(function() {
+    // POPULATE USER LIST
+    $.getJSON("{{ url_for('userlist', game=game) }}", function(data) {
+        $.each(data["users"], function(key, user) {
+            console.log(user)
+            selected = ""
+            if(data["loggedin"] == user)
+                //selected = " SELECTED"
+                loggedin = data["loggedin"]
+
+            $("#user_select").append("<option value='" + user + "'" + selected + ">" + user + "</option>")
+            n_users++
+        })
+    })
+
+    // BIND SIMPLE LOGIN HANDLER
+    $("#user_select").change(function() {
+        $.post("{{ url_for('login', game=game) }}", data={"user": $("#user_select").find(":selected").text()}, function(data) {
+            console.log(data)
+            location.href="/{{game}}/swipe"
+        })
+    })
+
+})
+
+function show_message(text) {
+    $("#message").text(text)
+    $("#message").fadeIn(200).delay(5000).fadeOut(500)
+}
+
+</script>
+</head>
+<body>
+<div id="login">
+IDENTIFY YOURSELF:
+<br>
+<select name="user" id="user_select">
+    <option value="">--</option>
+</select>
+</div>
+
+
+<a href="/matches">
+<marquee scrollamount="30" id="message">
+test
+</marquee>
+</a>
+
+</body>

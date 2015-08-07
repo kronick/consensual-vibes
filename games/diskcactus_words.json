@@ -1,0 +1,56 @@
+{
+    "things":
+        [
+            "wifi", "hammocks", "swings", "soil", "emoji", "chair", "bench",
+            "loft", "desert", "charging station",
+            "rope", "suits", "dresses", "flags", "patterns", "wood", "felt",
+            "???????????", "!!!!!", "gradient", "jpegs", "animated gifs", "video", "data", "charging bay",
+            "grass", "tree", "signs", "pendant", "amulet", "earings", "library",
+            "bicycle", "desert", "cactus", "disk", "succulent", "spheres", "disc", "frisbee",
+            "home", "shoes", "wheel", "vibes", "vibes", "domes", "terrain", "stones",
+            "clubhouse", "room", "garden", "cave", "booth", "zones", "zone", "stream",
+            "arduino", "sensors", "sunlight", "table", "camera", "apps", "intranet", "router", "minerals",
+            "book", "lens", "projection", "ice", "oculus", "avatars", "radio", "net",
+            "chatroom", "communication", "clocks", "platform", "content", "object",
+            "string", "scanner", "storage", "stories", "staff", "sticks", "rocks", "board game",
+            "installation", "environments", "devices", "marble", "antenna",
+            "api", "depth camera", "cart", "sound system", "slats", "tabs", "viewpoint",
+            "glitches", "simulation", "tent", "tower", "box",
+            "megaphone", ".com", "balloons", "goggles", "fire",
+            "arrangement", "journey", "maps", "diagrams", "capsules", "vectors", "mirrors", "grids", "line",
+            "summit", "alibaba", "foam", "inflatables", "fountain", "scaffold", "keyboard", "shelter", "walk",
+            "utilities", "underground", "signage", "tube", "plywood", "locator", "pool", "reflection", "foil",
+            "tool", "gathering", "meal", "feast", "walking", "vehicle", "pad", "bin", "guide", "backpack",
+            "eye", "hand", "foot", "head", "instrument", "tail", "space", "experience", "pedagogy", "tour",
+            "void", "atrium", "performance", "person", "human", "collective", "dance", "movement", "excercise",
+            "focus", "music", "trailer", "cushion"
+        ],
+
+    "modifiers":
+        [
+            "spinning", "illuminated", "underground", "intimate", "heavy", "free", "open", "distributed",
+            "rad", "usb-powered", "local", "feminist", "interchangeable",
+            "hanging", "dedicated", "egalitarian", "arid", "all-terrain", "rapid", "experimental",
+            "bright", "unironic", "interspecies", "unsupported", "3D printed", "collapsible", 
+            "wireless", "heirloom", "low-key", "slow", "slower", "small", "tiny",
+            "intentional", "durational", "motorized", "private", "public", "mobile", "concrete",
+            "infinite", "scarce", "lunar", "cyclical", "household", "pedestrian", "algorithmic", "generative",
+            "fractal", "resonant", "autonomous", "expanding", "portable", "desert", "sound-activated", "motion-activated",
+            "directional", "erogenous", "psychic", "mental", "gryoscopic", "VR", "altered", "custom",
+            "laser cut", "affectionate",  "musical",  "faceted", "simple", "pentagonal", "triangular",
+            "cubic", "liquid", "fluorescent", "symbolic", "potent", "implicit", "explicit", "inclusive", "accessible",
+            "single-purpose", "shareable", "anti-capitalist", "union made", "drive thru", "chill out",
+            "deployable", "drag-n-drop", "soundproof", "isolated", "ethical", "simulated", "encrypted", "weird", "sliding",
+            "glowing", "locking", "uncanny", "space-age", "certified", "authenticated", "100%", "purified", "rarified",
+            "intertwined", "delicate", "flat", "foldable", "pliable", "curvy", "rectilinear", "pop-up", "liquid", "temporary",
+            "spring-loaded", "woven", "knit", "bound", "tight", "printed", "moonlit", "hazy", "boundless", "panoramic",
+            "encapsulated", "theatrical", "narrated", "mathematical", "off-grid", "offline", "cast", "rhizomatic",
+            "flying", "expressive", "aged", "curated", "chosen", "adjustable", "remote", "close-up", "gridded", "staggered",
+            "aligned", "randomized", "seasoned", "difficult", "critical", "poignant", "synthesized", "viral", "mirrored",
+            "emotional", "overwhelming", "understated", "bring-your-own", "do-it-yourself", "transforming", "nourishing",
+            "vertical", "horizontal", "integrated", "laminated", "balanced", "educational", "lush", "etherial", "networked",
+            "photoshopped", "bottomless", "aluminum", "plastic", "trimmed", "soothing",
+            "elevated", "the same", "similar", "indexed", "cataloged", "orbital", "floating",
+            "unpredictable", "unplanned", "disorganized", "walking", "hieroglyphic"
+        ]
+}

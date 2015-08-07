@@ -1,0 +1,33 @@
+<!doctype html>
+<html style="overflow: auto;">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=0, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+<title>💾🌵 consenual vibes</title>
+<link rel="stylesheet" href="{{ url_for("static", filename="mobile-style.css") }}" type="text/css">
+<script src="{{ url_for("static", filename="jquery-2.1.1.min.js") }}"></script>
+<script src="{{ url_for("static", filename="jquery.transit.min.js") }}"></script>
+</head>
+<body style="overflow: auto;">
+<span class="emoji">✨</span> NEW GAME <span class="emoji">✨</span>
+
+<form action="{{ url_for("create_mass_game") }}" method="POST" class="creategame">
+    <label for="name">Name: </label> <input type="text" name="name" />
+    <br>
+    <p>Enter player names (up to 5) and word lists below, one item per line. Separate groups with "---"</p>
+
+    <label for="players">Players: </label> <textarea name="players" style="height: 5em;"></textarea>
+
+    <label for="things">Things: </label> <textarea name="things" style="height: 10em;"></textarea>
+    <label for="things">Modifiers: </label> <textarea name="modifiers" style="height: 10em;"></textarea>
+
+    <input type="submit" value="CREATE">
+</form>
+
+
+<marquee scrollamount="30" id="ticker">
+CHOOSE YOUR GAME
+</marquee>
+
+</body>
+</html>
